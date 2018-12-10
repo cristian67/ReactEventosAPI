@@ -1,25 +1,76 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Header from './components/Header';
+import Formulario from './components/Formulario';
+import Eventos from './components/Eventos';
+
 
 class App extends Component {
+
+token = 'KRTY3ARWSRYUCJ5Z2SKA';
+
+state = {
+  categorias: [],
+  eventos: []
+}
+
+componentDidMount(){
+  this.obtenerCategorias();
+}
+
+obtenerCategorias = async () => {
+  
+
+
+  let url = `https://www.eventbriteapi.com/v3/categories/?token=${this.token}&locale=es_ES`;
+
+  await fetch(url)
+          .then(respuesta => {
+                  return respuesta.json();
+                })
+          .then(categorias => { 
+                  this.setState({
+                    categorias: categorias.categories
+                    });
+                })
+          .catch(error => { 
+                  console.log(error);
+                });      
+}
+
+obtenerEventos = async(busqueda) => {
+
+  let url = `https://www.eventbriteapi.com/v3/events/search/?q=${busqueda.nombre}&sort_by=date&categories=${busqueda.categoria}&token=${this.token}&locale=es_ES`;
+
+  await fetch(url)
+          .then(respuesta => {
+                  return respuesta.json();
+                })
+          .then(eventos => { 
+                  this.setState({
+                    eventos: eventos.events
+                  });                                    
+                })
+          .catch(error => { 
+                  console.log(error);
+                }); 
+}
+
+
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+            <Header titulo = "Eventos" />
+
+            <div className="uk-container">
+              <Formulario
+                categorias = {this.state.categorias}
+                obtenerEventos = {this.obtenerEventos}
+              />
+              <Eventos 
+                eventos = {this.state.eventos}
+              />
+            </div>
       </div>
     );
   }
