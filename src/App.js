@@ -6,7 +6,7 @@ import Eventos from './components/Eventos';
 
 class App extends Component {
 
-token = 'KRTY3ARWSRYUCJ5Z2SKA';
+token = '';
 
 state = {
   categorias: [],
